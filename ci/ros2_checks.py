@@ -266,8 +266,19 @@ def course_46X():
         if "position" in amcl: break
         time.sleep(5)
     check("46X Lab 11: initial pose -> AMCL publishes /amcl_pose", "position" in amcl)
+    # wait until Nav2's lifecycle nodes are active (in the handout the student sends the goal from RViz afterwards)
+    t0, state = time.time(), ""
+    while time.time() - t0 < 180:
+        rc, state = run("ros2 lifecycle get /bt_navigator", timeout=20)
+        if state.strip().startswith("active"): break
+        time.sleep(5)
+    check("46X Lab 11: Nav2 lifecycle active (bt_navigator)", state.strip().startswith("active"), f"{time.time() - t0:.0f} s")
     goal = "{pose: {header: {frame_id: map}, pose: {position: {x: 0.5, y: -0.5, z: 0.0}, orientation: {w: 1.0}}}}"
-    rc, out = run(f"timeout 240 ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \"{goal}\"", timeout=260)
+    out = ""
+    for _ in range(3):
+        rc, out = run(f"timeout 240 ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \"{goal}\"", timeout=260)
+        if "rejected" not in out: break
+        time.sleep(10)
     check("46X Lab 11: Nav2 goal reached (NavigateToPose SUCCEEDED)", "SUCCEEDED" in out, out.strip().splitlines()[-1][:80] if out.strip() else "")
     stop_all()
 
