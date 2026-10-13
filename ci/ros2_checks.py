@@ -184,8 +184,11 @@ def pid_run(tag, lab, pid_cmd, env=None):
     rc, out = run("timeout 8 ros2 topic hz /joint_states", timeout=15)
     hz = [float(l.split(":")[1]) for l in out.splitlines() if "average rate" in l]
     check(f"{tag}: /joint_states published (dt = 0.005 s -> 200 Hz target)", hz and hz[-1] > 50, f"{hz[-1]:.0f} Hz" if hz else "no rate")
-    rc, out = run("timeout 4 ros2 topic echo /pid_debug --csv", timeout=10)
-    rows = [l.split(",") for l in out.splitlines() if l.count(",") >= 8]
+    rows = []
+    for _ in range(3):  # the ros2 CLI can need a few seconds to discover the topic: listen longer and retry
+        rc, out = run("timeout 8 ros2 topic echo /pid_debug --csv", timeout=15)
+        rows = [l.split(",") for l in out.splitlines() if l.count(",") >= 8]
+        if len(rows) > 100: break
     vals = np.array([[float(x) for x in r[-9:]] for r in rows]) if rows else np.zeros((0, 9))
     check(f"{tag}: /pid_debug CSV rows [t,qd,q,e,tau,P,I,D,sat]", len(vals) > 100 and np.isfinite(vals).all(), f"{len(vals)} rows")
     e_before = float(np.abs(vals[-50:, 3]).mean()) if len(vals) >= 50 else float("nan")
