@@ -13,8 +13,10 @@ python -m pip install -r requirements.txt
 python -m pytest -q                                     # runs the auto-checks on your starter code
 ```
 
-The tests fail with `NotImplementedError` until you complete the `# TODO`s. Commit and push often: every push runs
-the same tests on GitHub (the **Actions** tab shows the result; your instructor sees the score in GitHub Classroom).
+The tests fail with `NotImplementedError` until you complete the `# TODO`s. Commit and push as often as you like.
+When you are ready, **submit**: `gh student submit` (or **Submit** in the Classroom 50 web app, classroom50.org). Each
+submission is graded on GitHub with the same checks; the score appears under **Releases** in this repository. Plain
+pushes are not graded, so check your work locally first.
 
 ## C++ track (optional)
 
@@ -25,8 +27,8 @@ then
 python run_lab.py --cpp      # configure + build cpp/ with CMake, run the C++ checks, print your score
 ```
 
-To have the **C++** checks auto-graded on GitHub, change the first line of the file `LANGUAGE` from `python` to
-`cpp`, commit and push. You need a C++17 compiler (Windows: Visual Studio Build Tools (2022 or 2026), workload *Desktop
+To have your **C++** code graded instead of Python, change the first line of the file `LANGUAGE` from `python` to
+`cpp`, commit, push and submit. You need a C++17 compiler (Windows: Visual Studio Build Tools (2022 or 2026), workload *Desktop
 development with C++*; macOS: `xcode-select --install`; Ubuntu: `sudo apt install build-essential`); CMake and Ninja
 are installed by `requirements.txt`. The libraries (Eigen, doctest, JSON) are in `cpp_support/` — nothing else to
 install. See `cpp_support/README.md`.

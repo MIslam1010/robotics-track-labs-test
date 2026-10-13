@@ -1,7 +1,7 @@
 # SBEG 461 Robot Kinematics and Dynamics — Course project (team repository)
 
 Starter code for the course project. Read the **Project brief**, **Scenario sheets** and **Rubric** in the
-course's *Course Project* folder (course site). One repository per team (GitHub Classroom group assignment).
+course's *Course Project* folder (course site). One repository per team (Classroom 50 team assignment).
 
 ```bash
 python -m venv .venv && source .venv/bin/activate

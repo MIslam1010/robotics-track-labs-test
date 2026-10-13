@@ -236,6 +236,7 @@ def test_mass_matrix_from_jacobians(name, th, dth):
     assert np.allclose(lab.mass_matrix_from_jacobians(ARMS[name], th), model(name)["M"](th), atol=1e-10)
 
 
+@pytest.mark.local_only  # needs files outside a single-lab repository; not graded
 @pytest.mark.parametrize("name", list(ARMS))
 def test_361_library_matches_modern_robotics(name):
     """Your sbeg361_kinematics fk_space / jacobian_space against mr.FKinSpace / mr.JacobianSpace (skipped when the

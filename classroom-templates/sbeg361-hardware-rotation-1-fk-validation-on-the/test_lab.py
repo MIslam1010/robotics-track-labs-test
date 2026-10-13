@@ -43,6 +43,7 @@ def fk_tool_mm(q_servo_deg, offsets=OFF):
 
 
 # ------------------------------------------------------------------ shared model copy
+@pytest.mark.local_only  # needs files outside a single-lab repository; not graded
 def test_course_arm_copy_is_identical_to_shared():
     shared = HERE.parents[3] / "shared" / "course_robots.py"
     if not shared.exists():

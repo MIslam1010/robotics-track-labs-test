@@ -304,6 +304,9 @@ def _find_eigen():
         cands.append(str(Path(roboticstoolbox.__file__).parent / "ets" / "cpp-extensions"))
     except ImportError:
         pass
+    for up in [HERE, *HERE.parents][:7]:  # the course's own copy: cpp_support/third_party/eigen
+        for sup in (up / "cpp_support", up / "0 Course resources" / "cpp_support"):
+            cands.append(str(sup / "third_party" / "eigen"))
     for c in cands:
         if c and (Path(c) / "Eigen" / "Dense").exists():
             return c

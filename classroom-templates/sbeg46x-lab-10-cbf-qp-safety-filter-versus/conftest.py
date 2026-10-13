@@ -12,6 +12,20 @@ def _language(config):
     return "cpp" if v.strip().lower() in ("cpp", "c++") else "python"
 
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "local_only: needs files outside a single-lab repository; not graded")
+
+
+def pytest_collection_modifyitems(config, items):
+    """When graded (SBEG_GRADING=1), leave out tests that can only run in the full course tree."""
+    if not os.environ.get("SBEG_GRADING"):
+        return
+    drop = [i for i in items if i.get_closest_marker("local_only")]
+    if drop:
+        config.hook.pytest_deselected(items=drop)
+        items[:] = [i for i in items if not i.get_closest_marker("local_only")]
+
+
 def pytest_ignore_collect(collection_path, config):
     p = Path(str(collection_path))
     if p.is_dir():

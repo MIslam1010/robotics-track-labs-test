@@ -1,13 +1,16 @@
-name: GitHub Classroom templates (real grader)
-# Each template is laid out as a student's assignment repository and graded by the GitHub Classroom grader actions:
-# untouched starter (must score < 100 without errors) and reference solution (must score 100), Python and C++.
+name: Classroom 50 grading of the assignment templates
+# Each template is laid out as a student's assignment repository and graded by Classroom 50's own runner.py with the
+# course's declarative tests, on Classroom 50's runtime (ubuntu-latest + Python 3.11 from runtime.json):
+# untouched starter < 100 points, reference solution = 100 points, in Python and in C++ (LANGUAGE = cpp).
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['classroom-templates/**', 'ci/classroom_*', '.github/workflows/classroom-check.yml', 'cpp_support/**']
+    paths: ['classroom-templates/**', 'ci/c50*', 'ci/classroom_matrix.json', '.github/workflows/classroom-check.yml', 'cpp_support/**']
 permissions:
   contents: read
+env:
+  RUNNER_URL: https://raw.githubusercontent.com/foundation50/classroom50/f859773b654458b440b62b44effcce53018d3312/cli/gh-teacher/skeleton/dotgithub/scripts/runner.py
 jobs:
   list:
     runs-on: ubuntu-latest
@@ -35,81 +38,32 @@ jobs:
         printf '%s' "$SOLUTIONS_KEY" > "$RUNNER_TEMP/k"
         openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in solutions.tar.gz.enc -pass "file:$RUNNER_TEMP/k" | tar xz
         rm -f "$RUNNER_TEMP/k"
-    - name: lay out the template as an assignment repository
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: lay out the template as a student's repository; fetch Classroom 50's runner.py
       run: |
         mv solutions "$RUNNER_TEMP/sol"
-        cp ci/classroom_check.py "$RUNNER_TEMP/"
+        cp ci/c50_check.py "${{ matrix.t.tests }}" "$RUNNER_TEMP/" && echo "TESTS=$RUNNER_TEMP/$(basename ${{ matrix.t.tests }})" >> "$GITHUB_ENV"
+        curl -sSfL "$RUNNER_URL" -o "$RUNNER_TEMP/runner.py"
         mkdir "$RUNNER_TEMP/t" && cp -a "classroom-templates/${{ matrix.t.name }}/." "$RUNNER_TEMP/t/"
         if [ -f "$RUNNER_TEMP/t/LANGUAGE" ]; then cp -a cpp_support "$RUNNER_TEMP/t/"; fi
         find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-        cp -a "$RUNNER_TEMP/t/." .
-        ls
-    - name: Grader - Python, untouched starter
-      id: py-st
-      if: always()
-      uses: classroom-resources/autograding-python-grader@v1
-      env:
-        LAB_IMPL: starter
-        PYTHONPATH: ${{ matrix.t.pythonpath }}
-      with:
-        timeout: ${{ matrix.t.timeout }}
-        max-score: 100
-        setup-command: sh .github/classroom-setup.sh
-    - name: add the Python reference solution
+        cp -a "$RUNNER_TEMP/t/." . && ls
+    - name: Python, untouched starter (must score below 100)
+      run: python "$RUNNER_TEMP/c50_check.py" "$RUNNER_TEMP/runner.py" "$TESTS" "Python starter" ${{ matrix.t.kind == 'library' && 'full' || 'partial' }}
+    - name: Python, reference solution (must score 100)
       if: matrix.t.kind == 'lab'
-      run: rm -rf autograding_output && cp "$RUNNER_TEMP"/sol/${{ matrix.t.sol }}/*.py .
-    - name: Grader - Python, reference solution
-      id: py-sol
-      if: matrix.t.kind == 'lab'
-      uses: classroom-resources/autograding-python-grader@v1
-      env:
-        LAB_IMPL: solution
-        PYTHONPATH: ${{ matrix.t.pythonpath }}
-      with:
-        timeout: ${{ matrix.t.timeout }}
-        max-score: 100
-        setup-command: sh .github/classroom-setup.sh
-    - name: switch LANGUAGE to cpp (as a student does)
+      run: |
+        cp "$RUNNER_TEMP"/sol/${{ matrix.t.sol }}/*.py .
+        LAB_IMPL=solution python "$RUNNER_TEMP/c50_check.py" "$RUNNER_TEMP/runner.py" "$TESTS" "Python solution" full
+    - name: C++, untouched starter (LANGUAGE = cpp; must score below 100)
       if: matrix.t.cpp
-      run: rm -rf autograding_output && sed -i '1s/.*/cpp/' LANGUAGE
-    - name: Grader - C++, untouched starter
-      id: cpp-st
+      run: |
+        sed -i '1s/.*/cpp/' LANGUAGE
+        python "$RUNNER_TEMP/c50_check.py" "$RUNNER_TEMP/runner.py" "$TESTS" "C++ starter" partial
+    - name: C++, reference solution (must score 100)
       if: matrix.t.cpp
-      uses: classroom-resources/autograding-python-grader@v1
-      env:
-        LAB_IMPL: starter
-        PYTHONPATH: ${{ matrix.t.pythonpath }}
-      with:
-        timeout: ${{ matrix.t.timeout }}
-        max-score: 100
-        setup-command: sh .github/classroom-setup.sh
-    - name: add the C++ reference solution
-      if: matrix.t.cpp
-      run: rm -rf autograding_output build && for f in "$RUNNER_TEMP"/sol/${{ matrix.t.sol }}/cpp/solution*; do cp "$f" cpp/; done
-    - name: Grader - C++, reference solution
-      id: cpp-sol
-      if: matrix.t.cpp
-      uses: classroom-resources/autograding-python-grader@v1
-      env:
-        LAB_IMPL: solution
-        PYTHONPATH: ${{ matrix.t.pythonpath }}
-      with:
-        timeout: ${{ matrix.t.timeout }}
-        max-score: 100
-        setup-command: sh .github/classroom-setup.sh
-    - name: Autograding Reporter (as in classroom.yml), reference solution
-      if: matrix.t.kind == 'lab'
-      uses: classroom-resources/autograding-grading-reporter@v1
-      env:
-        PY-SOL_RESULTS: "${{ steps.py-sol.outputs.result }}"
-      with:
-        runners: py-sol
-    - name: scores
-      if: always()
-      env:
-        KIND: ${{ matrix.t.kind }}
-        PY_ST: ${{ steps.py-st.outputs.result }}
-        PY_SOL: ${{ steps.py-sol.outputs.result }}
-        CPP_ST: ${{ steps.cpp-st.outputs.result }}
-        CPP_SOL: ${{ steps.cpp-sol.outputs.result }}
-      run: python3 "$RUNNER_TEMP/classroom_check.py"
+      run: |
+        rm -rf build && for f in "$RUNNER_TEMP"/sol/${{ matrix.t.sol }}/cpp/solution*; do cp "$f" cpp/; done
+        LAB_IMPL=solution python "$RUNNER_TEMP/c50_check.py" "$RUNNER_TEMP/runner.py" "$TESTS" "C++ solution" full

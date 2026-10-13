@@ -38,6 +38,7 @@ def sim(controller):
 
 
 # ---------------------------------------------------------------- Checkpoint 0: your SBEG 361 library
+@pytest.mark.local_only  # needs files outside a single-lab repository; not graded
 @pytest.mark.skipif(lab.KIN_BACKEND != "sbeg361_kinematics", reason="sbeg361_kinematics not importable (fallback)")
 def test_361_library_matches_modern_robotics():
     for th in THETAS:

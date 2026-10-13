@@ -115,6 +115,7 @@ def test_time_per_call_is_positive_and_scales():
     assert t_slow > 5 * t_fast
 
 
+@pytest.mark.local_only  # needs a locally built cpp/build/rnea_bench; not graded
 def test_cpp_rnea_agrees_with_python(arm6, tmp_path):
     exe = os.environ.get("RNEA_CPP", str(HERE / "cpp" / "build" / "rnea_bench"))
     if not Path(exe).exists():

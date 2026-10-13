@@ -198,6 +198,7 @@ def test_course_arm_mr_example_4_5_pose():
                                atol=1e-12)
 
 
+@pytest.mark.local_only  # needs files outside a single-lab repository; not graded
 def test_course_arm_copy_is_identical_to_shared():
     # Instructor-side consistency check; skipped in the student copy of the lab.
     shared = HERE.parents[3] / "shared"
