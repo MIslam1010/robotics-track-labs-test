@@ -75,7 +75,7 @@ fraction (A3) with a ≥ 10° joint-limit margin (A1); dry-run prediction on the
 # Setup
 
 ```bash
-cd "<your Lab code folder>"          # or your GitHub Classroom repo
+cd "<your Lab code folder>"          # or your Classroom 50 repo
 python -c "import numpy, scipy, modern_robotics; print('ok')"
 LAB_IMPL=starter python -m pytest -q test_lab.py   # expected: 13 failed, 2 passed, 3 errors (NotImplementedError)
 ```

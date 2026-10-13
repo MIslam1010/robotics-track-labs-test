@@ -59,7 +59,7 @@ touches a device has signed the induction (A5, B1). 5. $1.8\times30 = 54°$.
 # Setup
 
 ```bash
-cd "<your Lab code folder>"          # or your GitHub Classroom repository
+cd "<your Lab code folder>"          # or your Classroom 50 repository
 python -c "import numpy, scipy; print('ok')"
 LAB_IMPL=starter python -m pytest -q test_lab.py   # expected now: 38 failed, 1 passed (NotImplementedError)
 ```

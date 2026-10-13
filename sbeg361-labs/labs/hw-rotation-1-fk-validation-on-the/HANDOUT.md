@@ -133,7 +133,7 @@ be adjusted, the arm is first powered down. A stop called by anyone, at any time
 # Setup (before the session)
 
 ```bash
-cd "<your Lab code folder>"                                     # or your GitHub Classroom repo
+cd "<your Lab code folder>"                                     # or your Classroom 50 repo
 source ~/Documents/Edu/Lectures/Robotics/MR-Studio/.venv/bin/activate   # or the course Docker image / JupyterHub
 LAB_IMPL=starter python -m pytest -q test_lab.py                 # 13 failures (NotImplementedError) expected
 ```

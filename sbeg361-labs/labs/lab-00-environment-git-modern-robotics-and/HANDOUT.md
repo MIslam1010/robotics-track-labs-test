@@ -19,7 +19,7 @@ subtitle: "SBEG 361 Introduction to Robotics — Week 1"
 By the end of this lab you can:
 
 1. Run the course Python environment (venv, Docker image or browser fallback) and report its versions.
-2. Use Git for your lab work (commit; push if your course uses GitHub Classroom) and submit a lab.
+2. Use Git for your lab work (commit; push if your course uses Classroom 50) and submit a lab.
 3. Implement Grübler's formula (MR Eq. 2.4) and the joint table (MR Table 2.1), and use them on biomedical and
    defence mechanisms.
 4. Handle the topology of joint angles in code: wrap angles to $[-\pi, \pi)$, measure distances on the torus $T^n$,
@@ -42,7 +42,7 @@ By the end of this lab you can:
 *Answers for self-check:* (1) yes; $m = 3$, $m = 6$. (2) U: $6 - 2 = 4$; S: $6 - 3 = 3$. (3) $\theta$ and
 $\theta + 2\pi$ give the same link position, so the angle "wraps around", e.g. $350^\circ$ and $-10^\circ$.
 (4) $\dot\lambda = \omega/\cos\varphi$. (5) `commit` records a snapshot in your local repository; `push` uploads your
-commits to a remote (e.g. GitHub Classroom), where the TA and the autograder can see them. Without a remote,
+commits to a remote (e.g. Classroom 50), where the TA and the autograder can see them. Without a remote,
 `commit` still gives you a history you can go back to.
 
 # Robot-lab safety briefing (safety sheet; first 5 min, mandatory)
@@ -84,8 +84,10 @@ complete in the session at home (up to 60 min).
 
 Your course uses one of two routes (the course site says which):
 
-* **Route A — GitHub Classroom:** accept the Lab 0 assignment and clone it (`git clone <your repo URL>`); the files
-  are already in it.
+* **Route A — Classroom 50:** accept the Lab 0 assignment (accept link from the course site, or
+  `gh student accept`) and clone your new repository (`git clone <your repo URL>`); the files are already in it.
+  One-time: install the GitHub CLI and the student tool (`gh extension install foundation50/gh-student`, then
+  `gh student login`).
 * **Route B — course lab repository:** download `sbeg361-labs` (ZIP or `git clone`) from the course site, run its
   setup script once (`bash setup.sh`, or `setup.ps1` on Windows) and work in `labs/lab-00-…/`.
 
@@ -93,7 +95,8 @@ Your course uses one of two routes (the course site says which):
    `git config --global user.email <university email>`.
 2. Implement `env_report()`. Run `pytest -q -k env` (with `LAB_IMPL=starter`; in Route B also `python run_lab.py 0`).
 3. `git add . && git commit -m "Lab 0: environment check"`. Route A: also `git push` and check that the commit appears
-   on GitHub.
+   on GitHub. Pushing is not submitting: when the lab is finished, run `gh student submit` (or **Submit** in the web
+   app); the autograder then scores that version and the result appears under **Releases** in your repository.
 
 ✅ *Checkpoint 1:* `test_env_report` passes and your first commit exists (Route A: on the remote).
 
@@ -161,7 +164,7 @@ Start MR Studio and press **F1** to show the theory panel.
 
 ✅ *Checkpoint 7:* six short answers in your notebook (one line each).
 
-# Deliverables (by the start of Week 2 Lecture A: Route A push to your repo; Route B `python submit.py 0 --id <ID>` and upload the ZIP)
+# Deliverables (by the start of Week 2 Lecture A: Route A `gh student submit`; Route B `python submit.py 0 --id <ID>` and upload the ZIP)
 
 1. `starter.py` (renamed `lab0.py` is fine) passing all tests in `test_lab.py`.
 2. `lab0_latlong.png` from Checkpoint 5.

@@ -47,7 +47,7 @@ By the end of the lab you can:
 # Setup
 
 ```bash
-cd "<your Lab code folder>"   # or your GitHub Classroom repo
+cd "<your Lab code folder>"   # or your Classroom 50 repo
 source ~/Documents/Edu/Lectures/Robotics/MR-Studio/.venv/bin/activate                          # or the course Docker image / JupyterHub
 python -c "import numpy, modern_robotics, roboticstoolbox; print('ok')"
 LAB_IMPL=starter python -m pytest -q test_lab.py               # 22 failures expected (1 provided-helper check passes): 21 NotImplementedError + the C++ test ("fkPoE not implemented"; skipped without a compiler)
@@ -141,7 +141,7 @@ The last test, `test_cpp_fk_matches_python`, compiles `main.cpp + robot_data.cpp
 
 # Deliverables (auto-checked lab; not a formal report)
 
-Submit to your GitHub Classroom repository before Hardware rotation 1 (Week 8):
+Submit to your Classroom 50 repository before Hardware rotation 1 (Week 8):
 
 1. `starter.py` with all functions implemented; `LAB_IMPL=starter python -m pytest -q test_lab.py` → **23 passed** (22 passed and 1 skipped if you could not install a C++ compiler or Eigen; then submit B4 using the timing printed by a lab PC).
 2. `cpp/fk_starter.cpp` completed, plus the generated `timing_cpp.csv`.
@@ -175,7 +175,7 @@ The course project (see the project brief, 15 % of the course mark) starts now (
 1. **Form a team of three.** Students without a team are placed by the instructor; if the class size is not a multiple of three, the instructor arranges the remaining teams.
 2. **Read** `project_brief.md` §1–4 and §8–10 and the six scenario pages of `scenario_sheets.md` together.
 3. **Choose one scenario** — three biomedical (S1 rehabilitation guide, S2 feeding/assistive fetch, S3 needle positioning with RCM) and three defence (S4 EOD arm, S5 casualty-extraction/litter loading, S6 field-hospital telesurgery with RCM). All six are equal choices; at most **two teams per scenario**, first come first served on the registration form. Defence scenarios are limited to protective, medical and humanitarian tasks (brief §8).
-4. **Register** the team name, members and scenario on the course registration form, then accept the GitHub Classroom assignment; your team repository is created from `starter/`. Post the repository link on the form.
+4. **Register** the team name, members and scenario on the course registration form, then accept the Classroom 50 assignment; your team repository is created from `starter/`. Post the repository link on the form.
 5. **First commit:** each member clones the repository, runs `pytest -q` (38 passed, 6 skipped before you start) and `python baseline.py N` for your scenario, and commits a `TEAM.md` with names, IDs and draft roles (brief §10). Every member must be able to explain every part of the work.
 6. **Plan ahead:** the hardware safety induction for all members is at the start of Week 8 Session 4 (your first hands-on contact with the course arm; nobody handles the arm before it); Weeks 8–9 model building; Week 10 proposal (`proposal_template.md`); the hardware booking sheet opens in Week 9 (brief §4.1).
 

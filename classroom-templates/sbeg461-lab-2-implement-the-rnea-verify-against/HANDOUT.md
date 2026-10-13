@@ -152,7 +152,7 @@ The provided helpers at the top of `starter.py` (loaders, plotting, simulators) 
 3. Answers to the four checkpoint questions (2–4 sentences each).
 4. Reflection (≤ 300 words, below), including the AI-use note.
 
-Submit through GitHub Classroom by the start of the Week 3 lab.
+Submit through Classroom 50 by the start of the Week 3 lab.
 
 # Reflection prompts
 

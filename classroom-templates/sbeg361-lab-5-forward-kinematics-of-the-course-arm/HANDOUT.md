@@ -48,7 +48,7 @@ By the end of the lab you can:
 # Setup
 
 ```bash
-cd "<your Lab code folder>"   # or your GitHub Classroom repo
+cd "<your Lab code folder>"   # or your Classroom 50 repo
 # activate the course Python environment (course venv, Docker image or JupyterHub)
 python -c "import numpy, modern_robotics; print('ok')"
 LAB_IMPL=starter python -m pytest -q test_lab.py               # 31 failures (NotImplementedError) expected

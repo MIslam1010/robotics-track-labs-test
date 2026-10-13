@@ -32,7 +32,7 @@ By the end of the lab you can:
 ## 3. Setup
 
 ```bash
-cd "<your Lab code folder>"          # or your GitHub Classroom repo
+cd "<your Lab code folder>"          # or your Classroom 50 repo
 source ~/Documents/Edu/Lectures/Robotics/MR-Studio/.venv/bin/activate   # or the course Docker image / Colab
 python -c "import numpy, modern_robotics; print('ok')"
 LAB_IMPL=starter pytest -q         # all tests fail with NotImplementedError: this is expected
@@ -76,7 +76,7 @@ An optical tracker reports the orientation $R_{sm}$ of a marker on a laparoscopi
 
 **Checkpoint D** — `LAB_IMPL=starter pytest -q` passes completely (18 tests).
 
-## 5. Deliverables (upload to GitHub Classroom by the start of next week's lab)
+## 5. Deliverables (upload to Classroom 50 by the start of next week's lab)
 
 - `starter.py` completed (all tests passing) — auto-checked.
 - `lab1_notes.md` (or a notebook): answers to checkpoints A–D, the table of invalid samples with the failing condition, and the before/after errors from Part D.

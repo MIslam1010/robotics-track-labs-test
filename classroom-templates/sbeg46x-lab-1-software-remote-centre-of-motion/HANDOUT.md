@@ -168,7 +168,7 @@ Write a short script `lab1_experiments.py` (Matplotlib) that imports your module
    with `mr.IKinSpace` so that the shaft points straight down with the tip 30 mm below the new port). Does the path stay
    within the joint limits? Report the smallest singular value of $A$ along the path for both ports.
 
-# Deliverables (by the start of the Week 2 lab: push to your GitHub Classroom repo, or `python submit.py 1 --id <ID>` and upload the ZIP)
+# Deliverables (by the start of the Week 2 lab: push to your Classroom 50 repo, or `python submit.py 1 --id <ID>` and upload the ZIP)
 
 1. `rcm.py` in `sbeg46x_medrob/` (your completed functions) and the lab folder with your completed starter, passing all
    tests (`LAB_IMPL=starter python -m pytest -q test_lab.py`).

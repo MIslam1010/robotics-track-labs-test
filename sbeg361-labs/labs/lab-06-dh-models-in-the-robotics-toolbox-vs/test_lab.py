@@ -326,7 +326,10 @@ def test_cpp_fk_matches_python(tmp_path):
     if not fk_src.exists():
         pytest.skip(f"fk_{IMPL}.cpp not found in the cpp/ folder of your Lab code folder")
     src = [cpp / "main.cpp", cpp / "robot_data.cpp", fk_src]
-    build = subprocess.run([cxx, "-std=c++17", "-O2", f"-I{eigen}", f"-I{cpp}", *map(str, src), "-o", str(exe)],
+    # Windows + MinGW: link the C++ runtime statically, otherwise the program may load another program's
+    # libstdc++ DLL from PATH and fail to start (exit code 0xC0000139)
+    static = ["-static"] if sys.platform == "win32" else []
+    build = subprocess.run([cxx, "-std=c++17", "-O2", f"-I{eigen}", f"-I{cpp}", *map(str, src), *static, "-o", str(exe)],
                            capture_output=True, text=True)
     assert build.returncode == 0, build.stderr[-2000:]
     run = subprocess.run([str(exe), str(HERE / "data" / "q_samples.csv"), str(tmp_path), "3"],

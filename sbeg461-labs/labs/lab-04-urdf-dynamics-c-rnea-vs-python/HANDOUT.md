@@ -44,7 +44,7 @@ By the end of the lab you can:
 # Setup
 
 ```bash
-cd "<your Lab code folder>"   # the Lab 4 code folder (or your GitHub Classroom repo)
+cd "<your Lab code folder>"   # the Lab 4 code folder (or your Classroom 50 repo)
 python -c "import numpy, modern_robotics, pinocchio; print('ok')"
 LAB_IMPL=starter python -m pytest -q test_lab.py   # 10 failed + 5 errors (NotImplementedError) is expected
 ```

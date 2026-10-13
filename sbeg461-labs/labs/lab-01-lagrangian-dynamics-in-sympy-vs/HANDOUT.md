@@ -137,7 +137,7 @@ robots. Then run the full test file. Finally answer in your notes:
 All tests: `LAB_IMPL=starter python -m pytest -q test_lab.py` → **69 passed** with your `sbeg361_kinematics` library
 (**66 passed, 3 skipped** on the `modern_robotics` fallback).
 
-# Deliverables (by the start of Week 2 Lecture A: push to your GitHub Classroom repo, or `python submit.py 1 --id <ID>` and upload the ZIP)
+# Deliverables (by the start of Week 2 Lecture A: push to your Classroom 50 repo, or `python submit.py 1 --id <ID>` and upload the ZIP)
 
 1. `starter.py` passing all tests (keep the file name or set `LAB_IMPL` to your module name).
 2. `lab1_notes.md`: the kinematics backend you used (`KIN_BACKEND`), the checkpoint-2 answer, the two checkpoint-5 answers with numbers, and a table of maximum

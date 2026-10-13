@@ -65,7 +65,7 @@ disabling a watchdog or a force limit.
 # Setup
 
 ```bash
-cd "<your Lab code folder>"            # or your GitHub Classroom repository
+cd "<your Lab code folder>"            # or your Classroom 50 repository
 python -c "import numpy, scipy, modern_robotics; print('ok')"
 LAB_IMPL=starter python -m pytest -q test_lab.py   # expected now: 25 failed (NotImplementedError)
 ```
