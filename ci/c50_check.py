@@ -14,6 +14,10 @@ for t in tests:
     out = runner.execute_test(t, cwd=pathlib.Path.cwd(), fixtures_dir=fixtures)
     total += out["score"]; maxp += t["points"]
     print(f"  {label:22s} {t['name'][:40]:40s} {'PASS' if out['passed'] else 'FAIL'} {out['score']:>3}/{t['points']:<3} {out.get('detail', '')[:90]}")
+    if not out["passed"] and t["type"] == "python":  # names + exception type only (public log: no tracebacks)
+        for line in (out.get("capture", {}).get("output", "") or "").splitlines():
+            if line.startswith(("FAILED ", "ERROR ")):
+                print("      " + line.split(" - ")[0] + (" - " + line.split(" - ")[1].split(":")[0] if " - " in line else ""))
 ok = (total == maxp) if expect == "full" else (total < maxp) if expect == "partial" else True
 print(f"{label}: {total}/{maxp}  ({'as expected' if ok else 'NOT as expected: ' + expect})")
 sys.exit(0 if ok else 1)

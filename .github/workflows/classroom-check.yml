@@ -4,6 +4,11 @@ name: Classroom 50 grading of the assignment templates
 # untouched starter < 100 points, reference solution = 100 points, in Python and in C++ (LANGUAGE = cpp).
 on:
   workflow_dispatch:
+    inputs:
+      only:
+        description: 'comma-separated template names to grade (empty = all)'
+        required: false
+        default: ''
   push:
     branches: [main]
     paths: ['classroom-templates/**', 'ci/c50*', 'ci/classroom_matrix.json', '.github/workflows/classroom-check.yml', 'cpp_support/**']
@@ -19,7 +24,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - id: m
-      run: echo "m=$(jq -c . ci/classroom_matrix.json)" >> "$GITHUB_OUTPUT"
+      env:
+        ONLY: ${{ inputs.only }}
+      run: echo "m=$(jq -c --arg only "$ONLY" 'if $only == "" then . else map(select(.name as $n | ($only | split(",") | index($n)))) end' ci/classroom_matrix.json)" >> "$GITHUB_OUTPUT"
   grade:
     needs: list
     strategy:
@@ -56,6 +63,7 @@ jobs:
       if: matrix.t.kind == 'lab'
       run: |
         cp "$RUNNER_TEMP"/sol/${{ matrix.t.sol }}/*.py .
+        if [ -d "$RUNNER_TEMP/sol/${{ matrix.t.sol }}/cpp" ]; then cp "$RUNNER_TEMP"/sol/${{ matrix.t.sol }}/cpp/* cpp/; fi
         LAB_IMPL=solution python "$RUNNER_TEMP/c50_check.py" "$RUNNER_TEMP/runner.py" "$TESTS" "Python solution" full
     - name: C++, untouched starter (LANGUAGE = cpp; must score below 100)
       if: matrix.t.cpp
