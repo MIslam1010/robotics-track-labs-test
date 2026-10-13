@@ -28,7 +28,7 @@ jobs:
         openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in solutions.tar.gz.enc -pass "file:$RUNNER_TEMP/k" | tar xz
         rm -f "$RUNNER_TEMP/k"
     - name: Build the course ROS 2 container (docker/ros2/Dockerfile)
-      run: docker build -q -t course-ros2 -f ${{ matrix.repo }}/docker/ros2/Dockerfile ${{ matrix.repo }}
+      run: docker build --progress=plain -t course-ros2 -f ${{ matrix.repo }}/docker/ros2/Dockerfile ${{ matrix.repo }}
     - name: ROS 2 steps of the handouts, inside the container
       run: |
         docker run --rm -v "$PWD":/w -w /w -e PUBLIC_LOGS=1 course-ros2           bash -c "source /opt/ros/jazzy/setup.bash && python3 ci/ros2_checks.py ${{ matrix.course }}"

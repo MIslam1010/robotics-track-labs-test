@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths-ignore: ['.github/workflows/ros2.yml', 'ci/ros2_checks.py', '*/docker/**', '*/.devcontainer/**']
 permissions:
   contents: read
 env:
