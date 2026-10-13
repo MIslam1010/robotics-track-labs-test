@@ -246,6 +246,7 @@ def test_unique_solutions():
 
 def test_all_solutions_search_finds_analytic_set():
     S, M, B, info = model("course_arm")
+    analytic_p8 = lab.ik_course_arm(mr.FKinSpace(M, S, P8), info["geometry"])
     for q, n in [(P8, 8), (info["q_home"], 4)]:
         T = mr.FKinSpace(M, S, q)
         analytic = lab.ik_course_arm(T, info["geometry"])
@@ -261,8 +262,11 @@ def test_all_solutions_search_finds_analytic_set():
                 assert contains(analytic, s, 1e-6), "every numerical solution must be one of the analytic ones"
         assert len(sols) == n, "enough random starts find every analytic branch of this pose"
     sols20, counts20, _ = lab.all_solutions_search(S, M, mr.FKinSpace(M, S, P8), n_starts=20, seed=0)
-    # 6 of 8 on the reference machine; round-off in the Newton iterations can change the count slightly by platform
-    assert 1 <= len(sols20) < 8, "with only 20 starts some of the 8 branches of P8 are missed"
+    # 6 of 8 on the reference computer. One start lies near a singularity (theta3 ~ 0), so the branch it reaches
+    # depends on round-off: some processors find all 8 with these 20 starts (as the C++ build does). Same checks as C++.
+    assert 1 <= len(sols20) <= 8 and len(sols20) == len(counts20)
+    for s in sols20:
+        assert contains(analytic_p8, s, 1e-6), "every numerical solution must be one of the analytic ones"
 
 
 def test_select_solution():
