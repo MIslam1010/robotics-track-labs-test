@@ -1,0 +1,67 @@
+{
+  "_note": "SBEG 46X Lab 11 -- simulated powered wheelchair in a hospital ward. ILLUSTRATIVE VALUES (teaching values, not the data of a real product). Units: m, rad, s. Chassis configuration q = (phi, x, y) as in Modern Robotics Ch. 13; {b} at the midpoint of the drive-wheel axle, x_b forward.",
+  "chair": {
+    "r": 0.17,
+    "d": 0.28,
+    "u_max": 9.0,
+    "v_max": 1.2,
+    "enc_counts_per_rev": 4096,
+    "h": 0.02,
+    "_comment": "nominal model used by odometry, EKF and controller: drive-wheel radius r, half the distance between the drive wheels d (track 2d = 0.56 m), wheel speed limit u_max (rad/s), indoor speed limit v_max (m/s), wheel encoders (counts per wheel revolution), control/odometry period h"
+  },
+  "truth": {
+    "r_L": 0.1692,
+    "r_R": 0.1706,
+    "d": 0.285,
+    "k_slip": 2.0e-5,
+    "_comment": "the simulated chair (unknown to the filter): effective wheel radii and half-track (tyre compression, wear), and random slip: each wheel's ground distance per step has variance k_slip * |r Delta theta| (m^2)"
+  },
+  "sensor": {
+    "every": 10,
+    "max_range": 5.0,
+    "sigma_range": 0.05,
+    "sigma_bearing_deg": 1.0,
+    "p_outlier": 0.03,
+    "outlier_short": [0.5, 1.5],
+    "_comment": "range-bearing sensor at the origin of {b} (lidar + retro-reflective ID markers): one scan every 'every' samples (0.2 s), every marker closer than max_range is detected with its ID; a fraction p_outlier of readings is a reflection (range too short by U(0.5, 1.5) m)"
+  },
+  "landmarks": [
+    [1, -2.5, -1.5],
+    [2, 3.0, -1.5],
+    [3, 9.0, -1.0],
+    [4, 9.0, 4.0],
+    [5, 6.0, 8.5],
+    [6, 1.0, 8.5],
+    [7, -3.0, 5.0],
+    [8, 3.0, 3.5]
+  ],
+  "ekf": {
+    "k_s": 4.0e-5,
+    "sigma_range": 0.05,
+    "sigma_bearing_deg": 1.0,
+    "P0_sigma": [0.0349066, 0.02, 0.02],
+    "gate": 9.21,
+    "_comment": "filter model: wheel distance noise variance k_s |r Delta theta| per wheel and step (m^2); sensor noise; initial standard deviations (2 deg, 2 cm, 2 cm) at the docking station; Mahalanobis gate = chi-square 99 % with 2 DOF"
+  },
+  "route": {
+    "v": 0.6,
+    "laps": 2,
+    "segments": [["line", 6.0], ["arc", 1.5, 90], ["line", 4.0], ["arc", 1.5, 90], ["line", 6.0], ["arc", 1.5, 90], ["line", 4.0], ["arc", 1.5, 90]],
+    "start": [0.0, 0.0, 0.0],
+    "_comment": "ward loop around the nurses' station: straight 6 m, left turn of radius 1.5 m, straight 4 m, ... (29.42 m per lap) at 0.6 m/s"
+  },
+  "control": {
+    "k1": 2.0,
+    "k2": 4.0,
+    "k3": 3.0,
+    "xr": 0.5,
+    "kp": 1.5,
+    "q0_offset": [0.2, -0.4, 0.3],
+    "_comment": "gains of the nonlinear tracking law (MR Eq. 13.31; k1 in 1/m, k2 in 1/m^2, k3 in 1/m), reference point x_r and gain k_p of the point-tracking law (MR Eqs. 13.21, 13.29), initial pose error of the closed-loop runs"
+  },
+  "arm_mount": {
+    "p_b0": [0.10, -0.33, 0.45],
+    "theta_feed": [0.0, 0.5, 0.0, -1.6, 0.0, 1.1, 0.0],
+    "_comment": "optional Part D: srs_7r_feeding base frame {0} in the chair frame {b} (right armrest, no rotation) and a feeding pose"
+  }
+}
