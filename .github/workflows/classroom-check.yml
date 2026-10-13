@@ -43,7 +43,7 @@ jobs:
         python-version: '3.11'
     - name: lay out the template as a student's repository; fetch Classroom 50's runner.py
       run: |
-        mv solutions "$RUNNER_TEMP/sol"
+        mkdir -p "$RUNNER_TEMP/sol" && mv solutions "$RUNNER_TEMP/sol/"
         cp ci/c50_check.py "${{ matrix.t.tests }}" "$RUNNER_TEMP/" && echo "TESTS=$RUNNER_TEMP/$(basename ${{ matrix.t.tests }})" >> "$GITHUB_ENV"
         curl -sSfL "$RUNNER_URL" -o "$RUNNER_TEMP/runner.py"
         mkdir "$RUNNER_TEMP/t" && cp -a "classroom-templates/${{ matrix.t.name }}/." "$RUNNER_TEMP/t/"
