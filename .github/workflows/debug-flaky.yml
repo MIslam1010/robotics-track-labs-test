@@ -1,0 +1,31 @@
+name: debug flaky test (Windows conda, 361 Lab 9)
+on: [workflow_dispatch, push]
+jobs:
+  repeat:
+    if: contains(github.event.head_commit.message, '[debug-flaky]') || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    env:
+      SOLUTIONS_KEY: ${{ secrets.SOLUTIONS_KEY }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: decrypt
+      run: |
+        printf '%s' "$SOLUTIONS_KEY" > "$RUNNER_TEMP/k"
+        openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in solutions.tar.gz.enc -pass "file:$RUNNER_TEMP/k" | tar xz
+        rm -f "$RUNNER_TEMP/k"
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-version: latest
+        environment-file: sbeg361-labs/environment.yml
+        activate-environment: sbeg361-labs
+    - name: run Lab 9 solution 15 times (failing test names only)
+      run: |
+        L=labs/lab-09-analytic-and-numerical-ik-of-the
+        cp solutions/sbeg361-labs/$L/*.py sbeg361-labs/$L/
+        cd sbeg361-labs/$L
+        for i in $(seq 1 15); do
+          LAB_IMPL=solution PYTHONPATH=../../library python -m pytest -q --tb=no -rf -p no:cacheprovider 2>&1 | grep -E "^FAILED|passed|failed" | sed "s/^/run $i: /"
+        done
