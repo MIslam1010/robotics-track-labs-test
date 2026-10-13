@@ -122,8 +122,8 @@ def tf_checks(tag, lab):
     check(f"{tag}: lookup patient_ref<-plan_entry equals nav_tree.json (1e-6)", T is not None and err < 1e-6, f"max err {err:.2e}")
     S = tf_samples("plan_entry", "tool_tip", duration=8.0)
     z = np.array([T[2, 3] for T in S]); y = np.array([T[1, 3] for T in S])
-    check(f"{tag}: B4 dynamic tool tip: z within 0-5 mm, y within 0.83-1.00 mm (handout)",
-          len(S) > 10 and z.min() > -1e-6 and z.max() < 0.005 + 1e-6 and y.min() > 0.00083 - 1e-6 and y.max() < 0.00100 + 1e-6,
+    check(f"{tag}: B4 dynamic tool tip: z within 0-5 mm, y within 0.826-1.000 mm (handout)",
+          len(S) > 10 and z.min() > -1e-6 and z.max() < 0.005 + 1e-6 and y.min() > 0.000826 - 1e-6 and y.max() < 0.00100 + 1e-6,
           f"{len(S)} samples, z {1e3 * z.min():.2f}..{1e3 * z.max():.2f} mm, y {1e3 * y.min():.3f}..{1e3 * y.max():.3f} mm" if len(S) else "none")
     rc, out = run("timeout 6 ros2 run tf2_ros tf2_echo patient_ref plan_entry", timeout=15)
     check(f"{tag}: handout command 'tf2_echo patient_ref plan_entry' prints a transform", "Translation" in out)
@@ -155,8 +155,19 @@ def course_361():
     ws = tempfile.mkdtemp()
     os.makedirs(os.path.join(ws, "src"))
     os.symlink(os.path.join(lab, "ros2", "cpp"), os.path.join(ws, "src", "sbeg361_nav_tf"))
-    rc, out = run("colcon build --packages-select sbeg361_nav_tf 2>&1 | tail -5", cwd=ws, timeout=900)
-    check("361 Lab 3 C++: colcon build sbeg361_nav_tf", rc == 0 and "Failed" not in out, out.strip().splitlines()[-1] if out.strip() else "")
+    rc, out = run("colcon build --packages-select sbeg361_nav_tf", cwd=ws, timeout=900)
+    ok = rc == 0 and os.path.isdir(os.path.join(ws, "install", "sbeg361_nav_tf"))
+    check("361 Lab 3 C++: colcon build sbeg361_nav_tf (handout commands)", ok)
+    if not ok:  # provided course code (not a solution): safe to show
+        for f in glob.glob(os.path.join(ws, "log", "latest_build", "sbeg361_nav_tf", "std*.log")):
+            print("".join(open(f, errors="replace").readlines()[-25:]))
+    # the same package without the system JSON library: falls back to cpp_support/third_party
+    ws2 = tempfile.mkdtemp(); os.makedirs(os.path.join(ws2, "src"))
+    os.symlink(os.path.join(lab, "ros2", "cpp"), os.path.join(ws2, "src", "sbeg361_nav_tf"))
+    rc2, out2 = run("colcon build --packages-select sbeg361_nav_tf --cmake-args -DCMAKE_DISABLE_FIND_PACKAGE_nlohmann_json=TRUE",
+                    cwd=ws2, timeout=900)
+    log2 = "".join(open(f, errors="replace").read() for f in glob.glob(os.path.join(ws2, "log", "latest_build", "sbeg361_nav_tf", "stdout*.log")))
+    check("361 Lab 3 C++: builds without nlohmann-json3-dev (copy in cpp_support)", rc2 == 0 and "using the copy in" in log2)
     start(f"source {ws}/install/setup.bash && ros2 run sbeg361_nav_tf nav_tf_broadcaster --ros-args -p lab_dir:='{lab}'",
           log="/tmp/b_cpp.log")
     time.sleep(4)
@@ -210,10 +221,17 @@ def course_461():
             "-p reference:=step -p q_target:=-0.3 -p t_step:=1.0 -p dt:=0.005", env={"LAB_IMPL": "solution"})
     # C++ node: cmake build linked with the C++ reference solution, simulator stays Python (untouched starter.py)
     shutil.copy(os.path.join(sol, "cpp", "solution.cpp"), os.path.join(work, "cpp", "solution.cpp"))
-    rc, out = run("cmake -S cpp/ros2 -B build_ros -DLAB_IMPL=solution 2>&1 | tail -3 && cmake --build build_ros 2>&1 | tail -3",
-                  cwd=work, timeout=900)
+    # the copy lives outside the repository, so point the build at cpp_support (documented -D / environment option)
+    cenv = {"SBEG_CPP_SUPPORT": os.path.join(ROOT, "sbeg461-labs", "cpp_support")}
+    rc, out = run("cmake -S cpp/ros2 -B build_ros -DLAB_IMPL=solution && cmake --build build_ros", cwd=work, timeout=900, env=cenv)
     ok = os.path.exists(os.path.join(work, "build_ros", "joint_pid_node"))
-    check("461 Lab 9 C++: 'cmake -S cpp/ros2 -B build_ros && cmake --build build_ros'", ok, out.strip().splitlines()[-1] if out.strip() else "")
+    check("461 Lab 9 C++: 'cmake -S cpp/ros2 -B build_ros && cmake --build build_ros'", ok)
+    if not ok:  # CMake messages only: compiler output could quote the reference solution
+        print("\n".join(l for l in out.splitlines() if l.startswith(("CMake Error", "  ", "-- Could")) and "solution" not in l)[-2500:])
+    # the same build from inside the repository, exactly as a student does it (cpp_support found automatically)
+    rc3, out3 = run("cmake -S cpp/ros2 -B /tmp/build_ros_student", cwd=lab, timeout=300)
+    check("461 Lab 9 C++: configure finds cpp_support from the Lab folder (student layout)", rc3 == 0,
+          "" if rc3 == 0 else [l for l in out3.splitlines() if "Error" in l][:1])
     if ok:
         for f in glob.glob(os.path.join(work, "solution*.py")): os.remove(f)   # simulator must run on the untouched starter.py
         pid_run("461 Lab 9 C++ node", work,

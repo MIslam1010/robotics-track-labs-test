@@ -131,7 +131,7 @@ ros2 run tf2_ros tf2_echo patient_ref plan_entry     # static: must match your l
 ros2 run tf2_ros tf2_echo plan_entry tool_tip        # dynamic: depth z grows 0 -> 5 mm, then the replay restarts
 ```
 
-Compare the first output with `nav.lookup("patient_ref", "plan_entry")` (translation, and the rotation after converting your $R$ to a quaternion). For the second, check that the $z$-translation stays within $0$–$5$ mm and $y$ between $0.83$ and $1.00$ mm.
+Compare the first output with `nav.lookup("patient_ref", "plan_entry")` (translation, and the rotation after converting your $R$ to a quaternion). For the second, check that the $z$-translation stays within $0$–$5$ mm and $y$ between $0.826$ and $1.000$ mm (the values of Part A, step b).
 
 **B5 — The tree as a picture.** Run `ros2 run tf2_tools view_frames`. It writes a PDF of the tree. Compare it with `nav.path("ct_image", "tool_tip")`.
 

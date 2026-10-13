@@ -3,7 +3,7 @@
 #   Linux:   docker run -it --rm --net=host -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v "$PWD":/work sbeg461-labs-ros2
 #   macOS/Windows: use VS Code "Reopen in Container" with .devcontainer/ros2, or the lab PCs for RViz windows.
 FROM osrf/ros:jazzy-desktop
-RUN apt-get update && apt-get install -y --no-install-recommends python3-pip python3-venv build-essential cmake libeigen3-dev git && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends python3-pip python3-venv build-essential cmake libeigen3-dev nlohmann-json3-dev git && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt /tmp/requirements.txt
 # Course packages in a virtual environment ON TOP OF the ROS 2 Python (--system-site-packages): rclpy, tf2_ros and the
 # message packages stay visible, and NumPy stays Ubuntu's 1.26 that ROS 2 Jazzy is built against (NumPy 2 breaks some

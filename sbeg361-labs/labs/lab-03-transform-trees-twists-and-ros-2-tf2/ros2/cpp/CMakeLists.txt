@@ -10,7 +10,30 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(nlohmann_json 3 REQUIRED)
+# JSON reader: the system package (Ubuntu: sudo apt install nlohmann-json3-dev) or, if it is not installed, the copy in
+# the course folder cpp_support/third_party (searched in the folders above the REAL location of this package, so the
+# colcon symlink ~/ros2_ws/src/sbeg361_nav_tf -> <Lab code folder>/ros2/cpp works).
+find_package(nlohmann_json 3 QUIET)
+if(NOT nlohmann_json_FOUND)
+  get_filename_component(_sbeg_dir "${CMAKE_CURRENT_SOURCE_DIR}" REALPATH)
+  set(_sbeg_json "")
+  foreach(_sbeg_level RANGE 8)
+    foreach(_sbeg_try "${_sbeg_dir}/cpp_support/third_party" "${_sbeg_dir}/0 Course resources/cpp_support/third_party")
+      if(NOT _sbeg_json AND EXISTS "${_sbeg_try}/nlohmann/json.hpp")
+        set(_sbeg_json "${_sbeg_try}")
+      endif()
+    endforeach()
+    get_filename_component(_sbeg_dir "${_sbeg_dir}" DIRECTORY)
+  endforeach()
+  if(NOT _sbeg_json)
+    message(FATAL_ERROR "nlohmann/json not found: sudo apt install nlohmann-json3-dev, or keep the course folder "
+                        "cpp_support next to (or above) your lab folders.")
+  endif()
+  add_library(sbeg_nlohmann_json INTERFACE)
+  target_include_directories(sbeg_nlohmann_json SYSTEM INTERFACE "${_sbeg_json}")
+  add_library(nlohmann_json::nlohmann_json ALIAS sbeg_nlohmann_json)
+  message(STATUS "nlohmann/json: using the copy in ${_sbeg_json}")
+endif()
 
 # Default data folder: the Lab code folder two levels above this package (nav_tree.json, tool_track.csv).
 get_filename_component(SBEG_LAB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.." REALPATH)
