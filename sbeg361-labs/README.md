@@ -18,7 +18,7 @@ Then activate the environment in every new terminal (`source .venv/bin/activate`
 and check it: `python check_env.py`.
 
 **Windows, or if pip fails:** use conda instead — install Miniforge (conda-forge.org) and run
-`conda env create -f environment.yml`, then `conda activate <name shown in the file>`.
+`conda env create -f environment.yml`, then `conda activate <name shown in the file>` (needed on Windows: Pinocchio, used in some labs, has no pip version for Windows).
 
 **If nothing installs** on your computer: use the container — install Docker Desktop, open the folder in VS Code
 and choose *Reopen in Container* (or see the commands in `Dockerfile`) — or use the lab PCs.

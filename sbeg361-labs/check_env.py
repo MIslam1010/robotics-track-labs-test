@@ -9,7 +9,7 @@ ok = True
 print(f"Python {platform.python_version()} on {platform.system()} {platform.machine()}")
 if sys.version_info < (3, 10):
     print("  ✗ Python 3.10 or newer is needed (3.11 recommended)."); ok = False
-NEEDED = {'numpy': 'arrays', 'scipy': 'numerical tools', 'modern_robotics': "the textbook's library", 'pytest': 'the auto-checks', 'matplotlib': 'plots', 'roboticstoolbox': "Corke's Robotics Toolbox (DH)"}
+NEEDED = {'numpy': 'arrays', 'scipy': 'numerical tools', 'modern_robotics': "the textbook's library", 'pytest': 'the auto-checks', 'matplotlib': 'plots', 'pinocchio': 'fast dynamics (Pinocchio)', 'roboticstoolbox': "Corke's Robotics Toolbox (DH)"}
 OPTIONAL = {'rclpy': 'ROS 2 parts — use the course Docker image or lab PC', 'pymycobot': 'real-arm driver — lab PCs only'}
 for mod, why in NEEDED.items():
     try:

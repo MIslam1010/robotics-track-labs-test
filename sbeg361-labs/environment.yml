@@ -1,10 +1,11 @@
-# Conda alternative (recommended on Windows):
+# Conda alternative (recommended on Windows — Pinocchio has no pip wheels for Windows):
 #   conda env create -f environment.yml && conda activate sbeg361-labs
 name: sbeg361-labs
 channels:
   - conda-forge
 dependencies:
   - python=3.11
+  - pinocchio=4.1
   - numpy
   - scipy
   - matplotlib
