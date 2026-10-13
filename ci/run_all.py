@@ -27,7 +27,15 @@ for lab_rel in labs:
     shutil.copytree(os.path.join(ROOT, "solutions", repo, lab_rel), os.path.join(tmp, lab_rel), dirs_exist_ok=True)
     sc2, out2 = run(tmp, {"LAB_IMPL": "solution"})
     ok = sc2 is not None and sc2[0] == sc2[1]
-    if not ok: bad.append(f"SOLUTION {lab_rel}: {sc2} {out2[-3000:]}")
+    if not ok:
+        names = ""
+        if not CPP:  # failing test names only (no tracebacks): re-run pytest with the summary on
+            e = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", LAB_IMPL="solution",
+                     PYTHONPATH=os.pathsep.join([os.path.join(tmp, "library"), os.environ.get("PYTHONPATH", "")]))
+            q = subprocess.run([sys.executable, "-m", "pytest", "-q", "--tb=no", "-rfE", "-p", "no:cacheprovider"],
+                               cwd=os.path.join(tmp, lab_rel), env=e, capture_output=True, text=True, timeout=1800)
+            names = "\n".join(l for l in (q.stdout + q.stderr).splitlines() if l.startswith(("FAILED ", "ERROR ")))
+        bad.append(f"SOLUTION {lab_rel}: {sc2} {out2[-3000:]}\n{names}")
     print(f"{lab_rel:60s} starter {sc}  solution {sc2}", flush=True)
     shutil.rmtree(tmp, ignore_errors=True)
 if CPP:
@@ -47,7 +55,12 @@ for extra in (() if CPP else ("project", "library")):
     p = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"], cwd=os.path.join(src, extra), capture_output=True, text=True)
     print(f"{extra}: {(p.stdout + p.stderr).strip().splitlines()[-1] if (p.stdout + p.stderr).strip() else ''}")
     if p.returncode: bad.append(f"{extra}: {(p.stdout + p.stderr)[-800:]}")
-if os.environ.get("PUBLIC_LOGS"):  # public repository: never print test output (it could quote solution code)
-    bad = [b.split(":")[0] for b in bad]
+if os.environ.get("PUBLIC_LOGS"):  # public repository: never print test output (it could quote solution code);
+    # keep only the names of failing tests and the exception type
+    def _names(b):
+        keep = [l.split(" - ")[0] + (" - " + l.split(" - ")[1].split(":")[0] if " - " in l else "")
+                for l in b.splitlines() if l.startswith(("FAILED ", "ERROR ")) or l.startswith(("FAIL  ",))]
+        return b.split(":")[0] + ("".join("\n    " + k for k in keep[:10]))
+    bad = [_names(b) for b in bad]
 print(f"\n{len(bad)} problem(s)"); print("\n\n".join(bad))
 sys.exit(1 if bad else 0)
