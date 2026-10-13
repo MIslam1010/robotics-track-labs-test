@@ -23,6 +23,8 @@ and check it: `python check_env.py`.
 **If nothing installs** on your computer: use the container — install Docker Desktop, open the folder in VS Code
 and choose *Reopen in Container* (or see the commands in `Dockerfile`) — or use the lab PCs.
 
+**ROS 2 parts** (labs whose handout has a ROS 2 section): use the ROS 2 container — VS Code *Reopen in Container* → `.devcontainer/ros2`, or build `docker/ros2/Dockerfile` — or the lab PCs. These parts are not auto-checked.
+
 
 **MR Studio** (the course simulator used in demos and some lab steps): install it from the course site —
 macOS (Apple Silicon): open `MR-Studio-1.0.0-macOS-arm64.dmg` and drag *MR Studio* to *Applications* (first start:
